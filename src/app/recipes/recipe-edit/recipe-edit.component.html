@@ -30,13 +30,14 @@
             <input type="text"
               id="imagePath"
               formControlName="imagePath"
-              class="form-control">
+              class="form-control"
+              #imagePath>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-12">
-          <img src=""
+          <img [src]="imagePath.value"
             class="img-responsive">
         </div>
       </div>
