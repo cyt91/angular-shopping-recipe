@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -6,5 +6,5 @@ import { Injectable } from '@angular/core';
 })
 export class DataStorageService {
 
-  constructor(private http: HttpClientModule) { }
+  constructor(private http: HttpClient) { }
 }
