@@ -7,14 +7,20 @@ import {
 import { Observable, of } from 'rxjs';
 import { DataStorageService } from '../shared/data-storage.service';
 import { Recipe } from './recipe.model';
+import { RecipeService } from './recipe.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipesResolver implements Resolve<Recipe[]> {
-  constructor(private dataStorageService: DataStorageService) {}
+  constructor(private dataStorageService: DataStorageService,
+              private recipeService: RecipeService) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Recipe[]> {
-    return this.dataStorageService.fetchRecipes();
+    const recipes = this.recipeService.getRecipes();
+    if (!recipes.length) {
+      return this.dataStorageService.fetchRecipes();
+    }
+    return of(recipes);
   }
 }
