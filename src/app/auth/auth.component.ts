@@ -30,9 +30,9 @@ export class AuthComponent {
         .subscribe(response => {
           console.log(response);
           this.isLoading = false;
-        }, error => {
-          console.error(error);
-          this.error = 'An error occured';
+        }, errorMsg => {
+          console.error(errorMsg);
+          this.error = errorMsg;
           this.isLoading = false;
         });
     }
