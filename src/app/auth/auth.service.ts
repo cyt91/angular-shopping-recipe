@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -27,29 +27,7 @@ export class AuthService {
           password,
           returnSecureToken: true
         }
-      ).pipe(catchError(errorRes => {
-        let errorMsg = 'An unknown error has occured.';
-        if (!errorRes.error?.error) {
-          return throwError(errorMsg);
-        }
-        switch (errorRes.error.error.message) {
-          case 'EMAIL_EXISTS':
-            errorMsg = 'This email already exists.';
-            break;
-
-          case 'OPERATION_NOT_ALLOWED':
-            errorMsg = 'Password sign in is disabled.';
-            break;
-
-          case 'TOO_MANY_ATTEMPTS_TRY_LATER':
-            errorMsg = 'Try again later. Too many attempts to sign up.';
-            break;
-
-          default:
-            break;
-        }
-        return throwError(errorMsg);
-      }));
+      ).pipe(catchError(this.handleError));
   }
 
   login(email: string, password: string): Observable<any> {
@@ -60,28 +38,42 @@ export class AuthService {
           password,
           returnSecureToken: true
         }
-      ).pipe(catchError(errorRes => {
-        let errorMsg = 'An unknown error has occured.';
-        if (!errorRes.error?.error) {
-          return throwError(errorMsg);
-        }
-        switch (errorRes.error.error.message) {
-          case 'EMAIL_NOT_FOUND':
-            errorMsg = 'This email does not exist.';
-            break;
+      ).pipe(catchError(this.handleError));
+  }
 
-          case 'INVALID_PASSWORD':
-            errorMsg = 'Password is incorrect.';
-            break;
+  private handleError(errorRes: HttpErrorResponse): Observable<any> {
+    let errorMsg = 'An unknown error has occured.';
+    if (!errorRes.error?.error) {
+      return throwError(errorMsg);
+    }
+    switch (errorRes.error.error.message) {
+      case 'EMAIL_NOT_FOUND':
+        errorMsg = 'This email does not exist.';
+        break;
 
-          case 'USER_DISABLED':
-            errorMsg = 'This account has been disabled.';
-            break;
+      case 'INVALID_PASSWORD':
+        errorMsg = 'Password is incorrect.';
+        break;
 
-          default:
-            break;
-        }
-        return throwError(errorMsg);
-      }));
+      case 'USER_DISABLED':
+        errorMsg = 'This account has been disabled.';
+        break;
+
+      case 'EMAIL_EXISTS':
+        errorMsg = 'This email already exists.';
+        break;
+
+      case 'OPERATION_NOT_ALLOWED':
+        errorMsg = 'Password sign in is disabled.';
+        break;
+
+      case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+        errorMsg = 'Try again later. Too many attempts to sign up.';
+        break;
+
+      default:
+        break;
+    }
+    return throwError(errorMsg);
   }
 }
